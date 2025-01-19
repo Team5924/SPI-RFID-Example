@@ -91,50 +91,103 @@ public class Robot extends TimedRobot {
 
     // SPI Objects
     private SPI spi;
+    byte[] pn532ack = {(byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0x00};
 
     // Threads and stuff
     // Functions
 
-    void writecommand(Byte[] cmd, int cmdlen) {
+    void writecommand(byte[] cmd, int cmdlen) {
         // SPI command write.
         int checksum;
-        Byte[] p = new Byte[9 + cmdlen];
+        byte[] p = new byte[9 + cmdlen];
         cmdlen++;
 
         p[0] = PN532_SPI_DATAWRITE;
-        p++;
+        
 
-        p[0] = PN532_PREAMBLE;
-        p++;
-        p[0] = PN532_STARTCODE1;
-        p++;
-        p[0] = PN532_STARTCODE2;
-        p++;
+        p[1] = PN532_PREAMBLE;
+        
+        p[2] = PN532_STARTCODE1;
+        
+        p[3] = PN532_STARTCODE2;
+        
         checksum = PN532_PREAMBLE + PN532_STARTCODE1 + PN532_STARTCODE2;
 
-        p[0] = cmdlen;
-        p++;
-        p[0] = ~cmdlen + 1;
-        p++;
+        p[4] = (byte) cmdlen;
+        
+        p[5] = (byte)((int)((byte) ~cmdlen) + 1);
+        
 
-        p[0] = PN532_HOSTTOPN532;
-        p++;
+        p[6] = PN532_HOSTTOPN532;
+        
         checksum += PN532_HOSTTOPN532;
 
-        for (uint8_t i = 0; i < cmdlen - 1; i++) {
-            p[0] = cmd[i];
-            p++;
+        for (int i = 0; i < cmdlen - 1; i++) {
+            p[i + 7] = cmd[i];
+            
             checksum += cmd[i];
         }
-
-        p[0] = ~checksum;
-        p++;
-        p[0] = PN532_POSTAMBLE;
-        p++;
-        spi.write(packet, 8 + cmdlen);
+        int index = 6 + cmdlen;
+        p[index] = (byte) ~checksum;
+        
+        p[index + 1] = PN532_POSTAMBLE;
+        
+        spi.write(p, 8 + cmdlen);
     }
 
-    bool Adafruit_PN532_sendCommandCheckAck(Byte[] cmd, int cmdlen, int timeout) {
+    boolean isready() {
+        
+        byte cmd = PN532_SPI_STATREAD;
+        byte[] reply = new byte[1];
+
+        //put bytes into an arry so spi.transaction can be used
+        byte[] cmdArray = {PN532_SPI_STATREAD};
+
+        spi.write(cmdArray, 1);
+        spi.read(false, reply, 1);
+        if(reply[0] == PN532_SPI_READY){
+            return true;
+        }
+        else{
+            return false;
+        }
+      }
+
+    boolean waitready(int timeout) {
+        int timer = 0;
+        while (!isready()) {
+          if (timeout != 0) {
+            timer += 10;
+            if (timer > timeout) {
+      
+              return false;
+            }
+          }
+          try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        }
+        return true;
+      }
+
+
+    boolean readack() {
+      byte[] ackbuff = new byte[6];
+      
+      
+      byte[] cmd = {PN532_SPI_DATAREAD};
+        spi.write(cmd, 1);
+        spi.read(false, ackbuff, 6);
+      
+      
+      return (ackbuff.equals(pn532ack));
+    }
+
+
+    boolean Adafruit_PN532_sendCommandCheckAck(byte[] cmd, int cmdlen, int timeout) {
         // write the command
         writecommand(cmd, cmdlen);
 
@@ -142,20 +195,11 @@ public class Robot extends TimedRobot {
         if (!waitready(timeout)) {
             return false;
         }
-        #ifdef PN532DEBUG
-        if (spi_dev == NULL) {
-            PN532DEBUGPRINT.println(F("IRQ received"));
-        }
-        #endif // read acknowledgement
+       
         if (!readack()) {
-            #ifdef PN532DEBUG
-            PN532DEBUGPRINT.println(F("No ACK frame received!"));
-            #endif
             return false;
         }
 
-        // I2C TUNING
-        delay(SLOWDOWN);
 
         // Wait for chip to say its ready!
         if (!waitready(timeout)) {
@@ -164,7 +208,7 @@ public class Robot extends TimedRobot {
 
         return true; // ack'd command
     }
-}
+
 /**
  * This function is run when the robot is first started up and should be used
  * for any initialization code.
@@ -285,5 +329,4 @@ public void simulationInit() {
 public void simulationPeriodic() {
     }
 
-    publi
 }
