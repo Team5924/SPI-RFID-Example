@@ -92,6 +92,8 @@ public class Robot extends TimedRobot {
     // SPI Objects
     private SPI spi;
     byte[] pn532ack = {(byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0x00};
+    byte[] pn532response_firmwarevers = {(byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0x06, (byte) 0xFA, (byte) 0xD5};
+    
 
     // Threads and stuff
     // Functions
@@ -187,7 +189,7 @@ public class Robot extends TimedRobot {
     }
 
 
-    boolean Adafruit_PN532_sendCommandCheckAck(byte[] cmd, int cmdlen, int timeout) {
+    boolean sendCommandCheckAck(byte[] cmd, int cmdlen, int timeout) {
         // write the command
         writecommand(cmd, cmdlen);
 
@@ -208,6 +210,45 @@ public class Robot extends TimedRobot {
 
         return true; // ack'd command
     }
+
+    void readdata(byte[] buff, int len) {
+   
+        // SPI read
+        byte[] cmd = {PN532_SPI_DATAREAD};
+        spi.write(cmd, 1);
+        spi.read(false, buff, len);
+       
+      }
+
+    int getFirmwareVersion() {
+        int response;
+      
+        byte[] pn532_packetbuffer =  {PN532_COMMAND_GETFIRMWAREVERSION};
+      
+        if (!sendCommandCheckAck(pn532_packetbuffer, 1, 5000)) {
+          return 0;
+        }
+      
+        // read data packet
+        readdata(pn532_packetbuffer, 13);
+      
+        // check some basic stuff
+        if (!pn532_packetbuffer.equals(pn532response_firmwarevers)) {
+      
+          return 0;
+        }
+      
+        int offset = 7;
+        response = pn532_packetbuffer[offset++];
+        response <<= 8;
+        response |= pn532_packetbuffer[offset++];
+        response <<= 8;
+        response |= pn532_packetbuffer[offset++];
+        response <<= 8;
+        response |= pn532_packetbuffer[offset++];
+      
+        return response;
+      }
 
 /**
  * This function is run when the robot is first started up and should be used
