@@ -24,79 +24,141 @@ public class Robot extends TimedRobot {
 
     /* ##### SPI Stuff ##### */
     // Constants
-    private static final byte PN532_PREAMBLE = (byte) 0x00;   ///< Command sequence start, byte 1/3
-    private static final byte PN532_STARTCODE1 = (byte) 0x00; ///< Command sequence start, byte 2/3
-    private static final byte PN532_STARTCODE2 = (byte) 0xFF; ///< Command sequence start, byte 3/3
-    private static final byte PN532_POSTAMBLE = (byte) 0x00;  ///< EOD
+    private static final byte PN532_PREAMBLE = (byte) 0x00;
+    ///< Command sequence start, byte 1/3
+    private static final byte PN532_STARTCODE1 = (byte) 0x00;
+    ///< Command sequence start, byte 2/3
+    private static final byte PN532_STARTCODE2 = (byte) 0xFF;
+    ///< Command sequence start, byte 3/3
+    private static final byte PN532_POSTAMBLE = (byte) 0x00;
+    ///< EOD
     
-    private static final byte PN532_HOSTTOPN532 = (byte) 0xD4; ///< Host-to-PN532
-    private static final byte PN532_PN532TOHOST = (byte) 0xD5; ///< PN532-to-host
+    private static final byte PN532_HOSTTOPN532 = (byte) 0xD4;
+    ///< Host-to-PN532
+    private static final byte PN532_PN532TOHOST = (byte) 0xD5;
+    ///< PN532-to-host
     
     // PN532 Commands
-    private static final byte PN532_COMMAND_DIAGNOSE = (byte) 0x00;              ///< Diagnose
-    private static final byte PN532_COMMAND_GETFIRMWAREVERSION = (byte) 0x02;    ///< Get firmware version
-    private static final byte PN532_COMMAND_GETGENERALSTATUS = (byte) 0x04;      ///< Get general status
-    private static final byte PN532_COMMAND_READREGISTER = (byte) 0x06;         ///< Read register
-    private static final byte PN532_COMMAND_WRITEREGISTER = (byte) 0x08;         ///< Write register
-    private static final byte PN532_COMMAND_READGPIO = (byte) 0x0C;              ///< Read GPIO
-    private static final byte PN532_COMMAND_WRITEGPIO = (byte) 0x0E;             ///< Write GPIO
-    private static final byte PN532_COMMAND_SETSERIALBAUDRATE = (byte) 0x10;     ///< Set serial baud rate
-    private static final byte PN532_COMMAND_SETPARAMETERS = (byte) 0x12;         ///< Set parameters
-    private static final byte PN532_COMMAND_SAMCONFIGURATION = (byte) 0x14;      ///< SAM configuration
-    private static final byte PN532_COMMAND_POWERDOWN = (byte) 0x16;             ///< Power down
-    private static final byte PN532_COMMAND_RFCONFIGURATION = (byte) 0x32;       ///< RF config
-    private static final byte PN532_COMMAND_RFREGULATIONTEST = (byte) 0x58;      ///< RF regulation test
-    private static final byte PN532_COMMAND_INJUMPFORDEP = (byte) 0x56;          ///< Jump for DEP
-    private static final byte PN532_COMMAND_INJUMPFORPSL = (byte) 0x46;          ///< Jump for PSL
-    private static final byte PN532_COMMAND_INLISTPASSIVETARGET = (byte) 0x4A;   ///< List passive target
-    private static final byte PN532_COMMAND_INATR = (byte) 0x50;                 ///< ATR
-    private static final byte PN532_COMMAND_INPSL = (byte) 0x4E;                 ///< PSL
-    private static final byte PN532_COMMAND_INDATAEXCHANGE = (byte) 0x40;        ///< Data exchange
-    private static final byte PN532_COMMAND_INCOMMUNICATETHRU = (byte) 0x42;     ///< Communicate through
-    private static final byte PN532_COMMAND_INDESELECT = (byte) 0x44;            ///< Deselect
-    private static final byte PN532_COMMAND_INRELEASE = (byte) 0x52;             ///< Release
-    private static final byte PN532_COMMAND_INSELECT = (byte) 0x54;              ///< Select
-    private static final byte PN532_COMMAND_INAUTOPOLL = (byte) 0x60;            ///< Auto poll
-    private static final byte PN532_COMMAND_TGINITASTARGET = (byte) 0x8C;        ///< Init as target
-    private static final byte PN532_COMMAND_TGSETGENERALBYTES = (byte) 0x92;     ///< Set general bytes
-    private static final byte PN532_COMMAND_TGGETDATA = (byte) 0x86;             ///< Get data
-    private static final byte PN532_COMMAND_TGSETDATA = (byte) 0x8E;             ///< Set data
-    private static final byte PN532_COMMAND_TGSETMETADATA = (byte) 0x94;         ///< Set metadata
-    private static final byte PN532_COMMAND_TGGETINITIATORCOMMAND = (byte) 0x88; ///< Get initiator command
-    private static final byte PN532_COMMAND_TGRESPONSETOINITIATOR = (byte) 0x90; ///< Response to initiator
-    private static final byte PN532_COMMAND_TGGETTARGETSTATUS = (byte) 0x8A;     ///< Get target status
+    private static final byte PN532_COMMAND_DIAGNOSE = (byte) 0x00;
+    ///< Diagnose
+    private static final byte PN532_COMMAND_GETFIRMWAREVERSION = (byte) 0x02;
+    ///< Get firmware version
+    private static final byte PN532_COMMAND_GETGENERALSTATUS = (byte) 0x04;
+    ///< Get general status
+    private static final byte PN532_COMMAND_READREGISTER = (byte) 0x06;
+    ///< Read register
+    private static final byte PN532_COMMAND_WRITEREGISTER = (byte) 0x08;
+    ///< Write register
+    private static final byte PN532_COMMAND_READGPIO = (byte) 0x0C;
+    ///< Read GPIO
+    private static final byte PN532_COMMAND_WRITEGPIO = (byte) 0x0E;
+    ///< Write GPIO
+    private static final byte PN532_COMMAND_SETSERIALBAUDRATE = (byte) 0x10;
+    ///< Set serial baud rate
+    private static final byte PN532_COMMAND_SETPARAMETERS = (byte) 0x12;
+    ///< Set parameters
+    private static final byte PN532_COMMAND_SAMCONFIGURATION = (byte) 0x14;
+    ///< SAM configuration
+    private static final byte PN532_COMMAND_POWERDOWN = (byte) 0x16;
+    ///< Power down
+    private static final byte PN532_COMMAND_RFCONFIGURATION = (byte) 0x32;
+    ///< RF config
+    private static final byte PN532_COMMAND_RFREGULATIONTEST = (byte) 0x58;
+    ///< RF regulation test
+    private static final byte PN532_COMMAND_INJUMPFORDEP = (byte) 0x56;
+    ///< Jump for DEP
+    private static final byte PN532_COMMAND_INJUMPFORPSL = (byte) 0x46;
+    ///< Jump for PSL
+    private static final byte PN532_COMMAND_INLISTPASSIVETARGET = (byte) 0x4A;
+    ///< List passive target
+    private static final byte PN532_COMMAND_INATR = (byte) 0x50;
+    ///< ATR
+    private static final byte PN532_COMMAND_INPSL = (byte) 0x4E;
+    ///< PSL
+    private static final byte PN532_COMMAND_INDATAEXCHANGE = (byte) 0x40;
+    ///< Data exchange
+    private static final byte PN532_COMMAND_INCOMMUNICATETHRU = (byte) 0x42;
+    ///< Communicate through
+    private static final byte PN532_COMMAND_INDESELECT = (byte) 0x44;
+    ///< Deselect
+    private static final byte PN532_COMMAND_INRELEASE = (byte) 0x52;
+    ///< Release
+    private static final byte PN532_COMMAND_INSELECT = (byte) 0x54;
+    ///< Select
+    private static final byte PN532_COMMAND_INAUTOPOLL = (byte) 0x60;
+    ///< Auto poll
+    private static final byte PN532_COMMAND_TGINITASTARGET = (byte) 0x8C;
+    ///< Init as target
+    private static final byte PN532_COMMAND_TGSETGENERALBYTES = (byte) 0x92;
+    ///< Set general bytes
+    private static final byte PN532_COMMAND_TGGETDATA = (byte) 0x86;
+    ///< Get data
+    private static final byte PN532_COMMAND_TGSETDATA = (byte) 0x8E;
+    ///< Set data
+    private static final byte PN532_COMMAND_TGSETMETADATA = (byte) 0x94;
+    ///< Set metadata
+    private static final byte PN532_COMMAND_TGGETINITIATORCOMMAND = (byte) 0x88;
+    ///< Get initiator command
+    private static final byte PN532_COMMAND_TGRESPONSETOINITIATOR = (byte) 0x90;
+    ///< Response to initiator
+    private static final byte PN532_COMMAND_TGGETTARGETSTATUS = (byte) 0x8A;
+    ///< Get target status
     
-    private static final byte PN532_RESPONSE_INDATAEXCHANGE = (byte) 0x41;      ///< Data exchange
-    private static final byte PN532_RESPONSE_INLISTPASSIVETARGET = (byte) 0x4B; ///< List passive target
+    private static final byte PN532_RESPONSE_INDATAEXCHANGE = (byte) 0x41;
+    ///< Data exchange
+    private static final byte PN532_RESPONSE_INLISTPASSIVETARGET = (byte) 0x4B;
+    ///< List passive target
     
-    private static final byte PN532_WAKEUP = (byte) 0x55; ///< Wake
+    private static final byte PN532_WAKEUP = (byte) 0x55;
+    ///< Wake
     
-    private static final byte PN532_SPI_STATREAD = (byte) 0x02;  ///< Stat read
-    private static final byte PN532_SPI_DATAWRITE = (byte) 0x01; ///< Data write
-    private static final byte PN532_SPI_DATAREAD = (byte) 0x03;  ///< Data read
-    private static final byte PN532_SPI_READY = (byte) 0x01;     ///< Ready
+    private static final byte PN532_SPI_STATREAD = (byte) 0x02;
+    ///< Stat read
+    private static final byte PN532_SPI_DATAWRITE = (byte) 0x01;
+    ///< Data write
+    private static final byte PN532_SPI_DATAREAD = (byte) 0x03;
+    ///< Data read
+    private static final byte PN532_SPI_READY = (byte) 0x01;
+    ///< Ready
     
-    private static final byte PN532_MIFARE_ISO14443A = (byte) 0x00; ///< MiFare
+    private static final byte PN532_MIFARE_ISO14443A = (byte) 0x00;
+    ///< MiFare
     
     // Mifare Commands
-    private static final byte MIFARE_CMD_AUTH_A = (byte) 0x60;           ///< Auth A
-    private static final byte MIFARE_CMD_AUTH_B = (byte) 0x61;           ///< Auth B
-    private static final byte MIFARE_CMD_READ = (byte) 0x30;             ///< Read
-    private static final byte MIFARE_CMD_WRITE = (byte) 0xA0;            ///< Write
-    private static final byte MIFARE_CMD_TRANSFER = (byte) 0xB0;         ///< Transfer
-    private static final byte MIFARE_CMD_DECREMENT = (byte) 0xC0;        ///< Decrement
-    private static final byte MIFARE_CMD_INCREMENT = (byte) 0xC1;        ///< Increment
-    private static final byte MIFARE_CMD_STORE = (byte) 0xC2;            ///< Store
-    private static final byte MIFARE_ULTRALIGHT_CMD_WRITE = (byte) 0xA2l; ///< Write (MiFare Ultralight)
+    private static final byte MIFARE_CMD_AUTH_A = (byte) 0x60;
+    ///< Auth A
+    private static final byte MIFARE_CMD_AUTH_B = (byte) 0x61;
+    ///< Auth B
+    private static final byte MIFARE_CMD_READ = (byte) 0x30;
+    ///< Read
+    private static final byte MIFARE_CMD_WRITE = (byte) 0xA0;
+    ///< Write
+    private static final byte MIFARE_CMD_TRANSFER = (byte) 0xB0;
+    ///< Transfer
+    private static final byte MIFARE_CMD_DECREMENT = (byte) 0xC0;
+    ///< Decrement
+    private static final byte MIFARE_CMD_INCREMENT = (byte) 0xC1;
+    ///< Increment
+    private static final byte MIFARE_CMD_STORE = (byte) 0xC2;
+    ///< Store
+    private static final byte MIFARE_ULTRALIGHT_CMD_WRITE = (byte) 0xA2l;
+    ///< Write (MiFare Ultralight)
 
     // SPI Objects
     private SPI spi;
     byte[] pn532ack = {(byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0x00};
     byte[] pn532response_firmwarevers = {(byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0x06, (byte) 0xFA, (byte) 0xD5};
-    
 
     // Threads and stuff
     // Functions
+    private byte reverseByte(byte b) {
+        byte reversedByte = 0;
+        for (int bit = 0; bit < 8; bit++) {
+            reversedByte = (byte) ((reversedByte << 1) | (b & 1));
+            b = (byte) (b >> 1);
+        }
+        return reversedByte;
+    }
 
     void writecommand(byte[] cmd, int cmdlen) {
         // SPI command write.
@@ -105,89 +167,103 @@ public class Robot extends TimedRobot {
         cmdlen++;
 
         p[0] = PN532_SPI_DATAWRITE;
-        
 
         p[1] = PN532_PREAMBLE;
-        
+
         p[2] = PN532_STARTCODE1;
-        
+
         p[3] = PN532_STARTCODE2;
-        
+
         checksum = PN532_PREAMBLE + PN532_STARTCODE1 + PN532_STARTCODE2;
 
         p[4] = (byte) cmdlen;
-        
-        p[5] = (byte)((int)((byte) ~cmdlen) + 1);
-        
+
+        p[5] = (byte) ((int) ((byte) ~cmdlen) + 1);
 
         p[6] = PN532_HOSTTOPN532;
-        
+
         checksum += PN532_HOSTTOPN532;
 
         for (int i = 0; i < cmdlen - 1; i++) {
             p[i + 7] = cmd[i];
-            
+
             checksum += cmd[i];
         }
         int index = 6 + cmdlen;
         p[index] = (byte) ~checksum;
-        
+
         p[index + 1] = PN532_POSTAMBLE;
-        
-        spi.write(p, 8 + cmdlen);
+        // Debug output
+        System.out.println("--- Debug: Byte Array Contents ---");
+        for (int i = 0; i < 8 + cmdlen; i++) {
+            System.out.println(String.format("Index %d: 0x%02X", i, p[i]));
+        }
+        System.out.println("--------------------------------");
+
+        int ret = spi.write(p, 8 + cmdlen);
+        System.out.println("SPI wrote: " + ret);
     }
 
     boolean isready() {
-        
-        byte cmd = PN532_SPI_STATREAD;
         byte[] reply = new byte[1];
+        byte[] cmdArray = {reverseByte(PN532_SPI_STATREAD)};
 
-        //put bytes into an arry so spi.transaction can be used
-        byte[] cmdArray = {PN532_SPI_STATREAD};
+        // Debug SPI configuration
+        // System.out.println("SPI Mode: " + spi.getMode());
+        // System.out.println("SPI Clock Rate: " + spi.getClockRate());
+        int cbWrite = spi.write(cmdArray, 1);
+        System.out.println("Status Read Command sent: 0x" + String.format("%02X", PN532_SPI_STATREAD));
 
-        spi.write(cmdArray, 1);
-        spi.read(false, reply, 1);
-        if(reply[0] == PN532_SPI_READY){
-            return true;
+        // Add small delay between write and read
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        else{
+
+        int cbRead = spi.read(false, reply, 1);
+        System.out.println("Raw reply byte: 0x" + String.format("%02X", reply[0]));
+
+        if (reply[0] == reverseByte(PN532_SPI_READY)) {
+            System.out.println("Device Ready");
+            return true;
+        } else {
+            System.err.println("Device Not Ready. Expected: 0x"
+                    + String.format("%02X", reverseByte(PN532_SPI_READY))
+                    + " Got: 0x" + String.format("%02X", reverseByte(reply[0])));
             return false;
         }
-      }
+    }
 
     boolean waitready(int timeout) {
         int timer = 0;
         while (!isready()) {
-          if (timeout != 0) {
-            timer += 10;
-            if (timer > timeout) {
-      
-              return false;
+            if (timeout != 0) {
+                timer += 10;
+                if (timer > timeout) {
+                    System.err.println("Timeout waiting for ready");
+                    return false;
+                }
             }
-          }
-          try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         return true;
-      }
-
-
-    boolean readack() {
-      byte[] ackbuff = new byte[6];
-      
-      
-      byte[] cmd = {PN532_SPI_DATAREAD};
-        spi.write(cmd, 1);
-        spi.read(false, ackbuff, 6);
-      
-      
-      return (ackbuff.equals(pn532ack));
     }
 
+    boolean readack() {
+        byte[] ackbuff = new byte[6];
+
+        byte[] cmd = {PN532_SPI_DATAREAD};
+        spi.write(cmd, 1);
+        spi.read(false, ackbuff, 6);
+
+        return (ackbuff.equals(pn532ack));
+    }
 
     boolean sendCommandCheckAck(byte[] cmd, int cmdlen, int timeout) {
         // write the command
@@ -195,16 +271,18 @@ public class Robot extends TimedRobot {
 
         // Wait for chip to say its ready!
         if (!waitready(timeout)) {
-            return false;
-        }
-       
-        if (!readack()) {
+            System.err.println("Not ready! Line 251");
             return false;
         }
 
+        if (!readack()) {
+            System.err.println("Read Ack failed");
+            return false;
+        }
 
         // Wait for chip to say its ready!
         if (!waitready(timeout)) {
+            System.err.println("Not ready! Line 262");
             return false;
         }
 
@@ -212,32 +290,33 @@ public class Robot extends TimedRobot {
     }
 
     void readdata(byte[] buff, int len) {
-   
+
         // SPI read
         byte[] cmd = {PN532_SPI_DATAREAD};
         spi.write(cmd, 1);
         spi.read(false, buff, len);
-       
-      }
+
+    }
 
     int getFirmwareVersion() {
         int response;
-      
-        byte[] pn532_packetbuffer =  {PN532_COMMAND_GETFIRMWAREVERSION};
-      
+
+        byte[] pn532_packetbuffer = {PN532_COMMAND_GETFIRMWAREVERSION};
+
         if (!sendCommandCheckAck(pn532_packetbuffer, 1, 5000)) {
-          return 0;
+            System.err.println("Yikes! Error on sendCommandCheckAck");
+            return 0;
         }
-      
+
         // read data packet
         readdata(pn532_packetbuffer, 13);
-      
+
         // check some basic stuff
         if (!pn532_packetbuffer.equals(pn532response_firmwarevers)) {
-      
-          return 0;
+            System.err.println("Yikes! Error on sendCommandCheckAck packet compare");
+            return 0;
         }
-      
+
         int offset = 7;
         response = pn532_packetbuffer[offset++];
         response <<= 8;
@@ -246,15 +325,15 @@ public class Robot extends TimedRobot {
         response |= pn532_packetbuffer[offset++];
         response <<= 8;
         response |= pn532_packetbuffer[offset++];
-      
-        return response;
-      }
 
-/**
- * This function is run when the robot is first started up and should be used
- * for any initialization code.
- */
-public Robot() {
+        return response;
+    }
+
+    /**
+     * This function is run when the robot is first started up and should be
+     * used for any initialization code.
+     */
+    public Robot() {
         m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
         m_chooser.addOption("My Auto", kCustomAuto);
         SmartDashboard.putData("Auto choices", m_chooser);
@@ -263,7 +342,6 @@ public Robot() {
         spi.setClockRate(1000000);
         spi.setMode(SPI.Mode.kMode3);
         spi.setChipSelectActiveLow();
-
     }
 
     /**
@@ -276,7 +354,7 @@ public Robot() {
      * LiveWindow and SmartDashboard integrated updating.
      */
     @Override
-public void robotPeriodic() {
+    public void robotPeriodic() {
     }
 
     /**
@@ -292,7 +370,7 @@ public void robotPeriodic() {
      * SendableChooser make sure to add them to the chooser code above as well.
      */
     @Override
-public void autonomousInit() {
+    public void autonomousInit() {
         m_autoSelected = m_chooser.getSelected();
         // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
         System.out.println("Auto selected: " + m_autoSelected);
@@ -302,7 +380,7 @@ public void autonomousInit() {
      * This function is called periodically during autonomous.
      */
     @Override
-public void autonomousPeriodic() {
+    public void autonomousPeriodic() {
         switch (m_autoSelected) {
             case kCustomAuto:
                 // Put custom auto code here
@@ -318,56 +396,87 @@ public void autonomousPeriodic() {
      * This function is called once when teleop is enabled.
      */
     @Override
-public void teleopInit() {
+    public void teleopInit() {
+        // int versiondata = getFirmwareVersion();
+        // System.out.println("Found chip PN5");
+        // System.out.println((versiondata >> 24) & 0xFF);
+        // System.out.println("Firmware ver. ");
+        // System.out.println((versiondata >> 16) & 0xFF);
+        // System.out.println('.');
+        // System.out.println((versiondata >> 8) & 0xFF);
+
+        spi.write(new byte[]{0x00}, 1);
+        byte[] status_cmd = {reverseByte(PN532_SPI_STATREAD), 0x00};
+        byte[] status_response = {0x00, 0x00};
+
+        long startTime = System.currentTimeMillis();
+
+        while ((System.currentTimeMillis() - startTime) < (5 * 1000)) {
+            spi.transaction(status_cmd, status_response, 2);
+
+            System.out.println("Status Response: 0x" + String.format("%02X", status_response[0]) + " 0x" + String.format("%02X", status_response[1]));
+
+            if (reverseByte(status_response[1]) == 0x01) {
+                System.out.println("Device is ready!");
+            }
+
+            try {
+                Thread.sleep(10);  // 0.01 seconds
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        System.err.println("Timeout waiting for ready");
     }
 
     /**
      * This function is called periodically during operator control.
      */
     @Override
-public void teleopPeriodic() {
+    public void teleopPeriodic() {
     }
 
     /**
      * This function is called once when the robot is disabled.
      */
     @Override
-public void disabledInit() {
+    public void disabledInit() {
     }
 
     /**
      * This function is called periodically when disabled.
      */
     @Override
-public void disabledPeriodic() {
+    public void disabledPeriodic() {
     }
 
     /**
      * This function is called once when test mode is enabled.
      */
     @Override
-public void testInit() {
+    public void testInit() {
     }
 
     /**
      * This function is called periodically during test mode.
      */
     @Override
-public void testPeriodic() {
+    public void testPeriodic() {
     }
 
     /**
      * This function is called once when the robot is first started up.
      */
     @Override
-public void simulationInit() {
+    public void simulationInit() {
     }
 
     /**
      * This function is called periodically whilst in simulation.
      */
     @Override
-public void simulationPeriodic() {
+    public void simulationPeriodic() {
     }
 
 }
